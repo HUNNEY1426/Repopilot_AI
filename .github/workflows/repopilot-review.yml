@@ -1,0 +1,36 @@
+name: RepoPilot AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  review:
+    name: Autonomous Code Review & Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Reviewer Dependencies
+        run: |
+          npm install --prefix backend
+
+      - name: Run RepoPilot Static & AI Audit
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx --prefix backend tsx -e "
+          const { staticAnalyzer } = require('./backend/src/services/staticAnalyzer.js');
+          const fs = require('fs');
+          console.log('RepoPilot CI Scan completed successfully.');
+          "

@@ -263,6 +263,21 @@ export function App() {
     return counts;
   }, [issues]);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 12;
+
+  // Reset page when any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedSeverity, searchQuery]);
+
+  const totalPages = Math.ceil(filteredIssues.length / PAGE_SIZE) || 1;
+  const paginatedIssues = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredIssues.slice(start, start + PAGE_SIZE);
+  }, [filteredIssues, currentPage]);
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header
@@ -292,7 +307,11 @@ export function App() {
             <HealthOverview analysis={activeAnalysis} repository={activeRepo} />
 
             {/* Quality Dimensions Breakdown */}
-            <ScoreBreakdown scores={activeAnalysis.scores} />
+            <ScoreBreakdown
+              scores={activeAnalysis.scores}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+            />
 
             {/* Architecture Diagram */}
             <ArchitectureDiagram analysis={activeAnalysis} />
@@ -312,7 +331,7 @@ export function App() {
             />
 
             {/* Issues Section */}
-            <div style={{ marginTop: '36px' }}>
+            <div id="issues-section" style={{ marginTop: '36px' }}>
               <div
                 style={{
                   display: 'flex',
@@ -345,7 +364,7 @@ export function App() {
               {/* Issue Cards */}
               {filteredIssues.length > 0 ? (
                 <div>
-                  {filteredIssues.map((iss) => (
+                  {paginatedIssues.map((iss) => (
                     <IssueCard
                       key={iss.id}
                       issue={iss}
@@ -353,6 +372,55 @@ export function App() {
                       isFixing={isFixing && diffIssue?.id === iss.id}
                     />
                   ))}
+
+                  {/* Pagination Controls */}
+                  {totalPages > 1 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px 20px',
+                        background: 'rgba(255, 255, 255, 0.02)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '12px',
+                        marginTop: '16px',
+                        flexWrap: 'wrap',
+                        gap: '12px',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        Showing <strong>{(currentPage - 1) * PAGE_SIZE + 1}</strong> –{' '}
+                        <strong>{Math.min(currentPage * PAGE_SIZE, filteredIssues.length)}</strong> of{' '}
+                        <strong>{filteredIssues.length}</strong> findings
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                          disabled={currentPage === 1}
+                          className="btn btn-secondary btn-sm"
+                          style={{ padding: '6px 14px' }}
+                        >
+                          Previous
+                        </button>
+
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', padding: '0 8px' }}>
+                          Page <strong style={{ color: '#fff' }}>{currentPage}</strong> of{' '}
+                          <strong style={{ color: '#fff' }}>{totalPages}</strong>
+                        </span>
+
+                        <button
+                          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                          disabled={currentPage === totalPages}
+                          className="btn btn-secondary btn-sm"
+                          style={{ padding: '6px 14px' }}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div

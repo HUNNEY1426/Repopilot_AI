@@ -137,22 +137,47 @@ export const Header: React.FC<HeaderProps> = ({
               gap: '6px',
               padding: '6px 12px',
               borderRadius: '20px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid var(--border-subtle)',
+              background: settings?.activeProvider === 'gemini' && !settings?.geminiApiKeyConfigured
+                ? 'rgba(245, 158, 11, 0.12)'
+                : 'rgba(255, 255, 255, 0.04)',
+              border: `1px solid ${
+                settings?.activeProvider === 'gemini' && !settings?.geminiApiKeyConfigured
+                  ? 'rgba(245, 158, 11, 0.4)'
+                  : 'var(--border-subtle)'
+              }`,
               fontSize: '0.75rem',
               color: 'var(--text-secondary)',
               cursor: 'pointer',
+              transition: 'all 0.2s',
             }}
-            title="Click to configure AI Providers"
+            title="Click to configure AI Provider & API Keys"
           >
-            <Cpu size={14} color="var(--cyan)" />
+            <Cpu
+              size={14}
+              color={
+                settings?.activeProvider === 'gemini' && !settings?.geminiApiKeyConfigured
+                  ? '#f59e0b'
+                  : 'var(--cyan)'
+              }
+            />
             <span>
               AI:{' '}
-              <strong style={{ color: '#fff' }}>
+              <strong
+                style={{
+                  color:
+                    settings?.activeProvider === 'gemini' && !settings?.geminiApiKeyConfigured
+                      ? '#fbbf24'
+                      : '#fff',
+                }}
+              >
                 {settings?.activeProvider === 'gemini'
-                  ? 'Gemini 2.5'
+                  ? settings?.geminiApiKeyConfigured
+                    ? 'Gemini 2.5'
+                    : 'Gemini (Add Key)'
                   : settings?.activeProvider === 'openai'
-                  ? 'OpenAI'
+                  ? settings?.openaiApiKeyConfigured
+                    ? 'OpenAI'
+                    : 'OpenAI (Add Key)'
                   : 'Smart Rules'}
               </strong>
             </span>

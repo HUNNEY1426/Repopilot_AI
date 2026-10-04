@@ -20,12 +20,17 @@ export class FallbackProvider implements AIProvider {
     const mediumCount = findings.filter((f) => f.severity === 'medium').length;
 
     let healthAssessment = 'The repository appears reasonably well-structured.';
-    if (criticalCount > 0 || highCount > 2) {
+    const securityCount = findings.filter((f) => f.category === 'security').length;
+
+    if (criticalCount > 0) {
       healthAssessment =
-        'CRITICAL ATTENTION REQUIRED: High-severity security vulnerabilities and architectural debt were identified that pose immediate risk to production deployments.';
-    } else if (mediumCount > 3) {
+        'CRITICAL ATTENTION REQUIRED: Critical security vulnerabilities were identified that pose immediate risk to production deployments.';
+    } else if (highCount > 0) {
       healthAssessment =
-        'MODERATE CONCERNS: The codebase demonstrates functional intent but exhibits maintainability gaps, missing test coverage, and configuration smells.';
+        'HIGH PRIORITY ISSUES DETECTED: Architectural debt and high-impact findings require remediation to ensure maintainability and security.';
+    } else if (mediumCount > 3 || findings.length > 5) {
+      healthAssessment =
+        'MODERATE CONCERNS: The codebase demonstrates functional intent but exhibits maintainability gaps, missing test coverage, and code quality improvement opportunities.';
     }
 
     const summary = `### Repository Health Assessment for ${context.repoName}
@@ -34,9 +39,8 @@ ${healthAssessment}
 **Key Observations:**
 - Primary Stack: ${context.language}
 - Total Detected Issues: ${findings.length} (${criticalCount} Critical, ${highCount} High, ${mediumCount} Medium)
-- Architecture & Design: Review identified areas where business logic, direct database interactions, and routing are coupled in entry-point files.
-- Security Posture: Potential secret exposures, insecure configuration, and input handling concerns require immediate remediation.
-- Recommendation: Prioritize fixing critical security items, isolate database logic into dedicated service layers, and introduce automated integration tests.`;
+- Security Posture: ${securityCount > 0 ? `${securityCount} security concern(s) identified.` : 'Zero critical security vulnerabilities detected.'}
+- Recommendation: Focus on improving test coverage, addressing highlighted code quality areas, and modularizing functions.`;
 
     const issues = findings.map((f) => ({
       category: f.category,

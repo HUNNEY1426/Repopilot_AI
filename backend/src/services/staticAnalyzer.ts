@@ -257,23 +257,25 @@ export class StaticAnalyzer {
           maxNestingInFunc = 0;
         }
 
-        // Track indentation level for deep nesting (> 4 indentations)
+        // Track indentation level for deep nesting (flag only extreme nesting >= 6, max 3 per file)
         const leadingSpaces = line.search(/\S|$/);
         const indentLevel = Math.floor(leadingSpaces / 2);
-        if (indentLevel > 4) {
-          if (!findings.some((f) => f.ruleId === 'QUAL-002' && f.file === file.path && f.line === lineNum)) {
+        const existingQual002 = findings.filter((f) => f.ruleId === 'QUAL-002' && f.file === file.path);
+        if (indentLevel >= 6 && existingQual002.length < 3) {
+          if (!existingQual002.some((f) => Math.abs(f.line - lineNum) < 8)) {
             findings.push({
               ruleId: 'QUAL-002',
               category: 'quality',
               severity: 'low',
-              title: `Deeply nested logic (indentation level ${indentLevel})`,
+              title: `Deeply nested block (nesting depth ${indentLevel})`,
               description:
-                'Deep nesting of control flow statements increases cyclomatic complexity and impairs readability.',
+                'Excessive nesting of control flow statements increases cyclomatic complexity and impairs maintainability.',
               file: file.path,
               line: lineNum,
               codeSnippet: line,
               recommendation: 'Use early return guard clauses or extract nested branches into helper functions.',
             });
+            qualityIssuesCount++;
           }
         }
 

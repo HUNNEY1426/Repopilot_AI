@@ -84,14 +84,34 @@ export const analysisController = {
       repoDb.createIssues(issueRecords);
 
       // 5. Update completed analysis record
+      const finalScores = aiResult.scores && typeof aiResult.scores.overall === 'number'
+        ? {
+            overall: Math.min(100, Math.max(0, Math.round(aiResult.scores.overall))),
+            security: Math.min(100, Math.max(0, Math.round(aiResult.scores.security ?? staticResult.scores.security))),
+            codeQuality: Math.min(100, Math.max(0, Math.round(aiResult.scores.codeQuality ?? staticResult.scores.codeQuality))),
+            testing: Math.min(100, Math.max(0, Math.round(aiResult.scores.testing ?? staticResult.scores.testing))),
+            architecture: Math.min(100, Math.max(0, Math.round(aiResult.scores.architecture ?? staticResult.scores.architecture))),
+            documentation: Math.min(100, Math.max(0, Math.round(aiResult.scores.documentation ?? staticResult.scores.documentation))),
+            maintainability: Math.min(100, Math.max(0, Math.round(aiResult.scores.maintainability ?? staticResult.scores.maintainability))),
+            dependencies: Math.min(100, Math.max(0, Math.round(aiResult.scores.dependencies ?? staticResult.scores.dependencies))),
+          }
+        : staticResult.scores;
+
       const completedAnalysis: Analysis = {
         id: analysisId,
         repository_id: repo.id,
         commit_sha: scanResult.commitSha,
         status: 'completed',
-        overall_score: staticResult.scores.overall,
-        scores: staticResult.scores,
+        overall_score: finalScores.overall,
+        scores: finalScores,
         summary: aiResult.summary,
+        ai_insights: {
+          provider: aiResult.providerName,
+          model: repoDb.getSetting('gemini_model') || 'gemini-3.5-flash',
+          strengths: aiResult.strengths || [],
+          weaknesses: aiResult.weaknesses || [],
+          recommendations: aiResult.recommendations || [],
+        },
         metrics: {
           ...staticResult.metrics,
           totalFilesScanned: scanResult.totalFiles,

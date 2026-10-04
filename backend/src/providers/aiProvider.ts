@@ -1,4 +1,4 @@
-import type { IssueCategory, Severity } from '../types/index.js';
+import type { IssueCategory, Severity, DimensionScores } from '../types/index.js';
 
 export interface AIReviewIssue {
   category: IssueCategory;
@@ -13,6 +13,10 @@ export interface AIReviewIssue {
 
 export interface AIAnalyzeResult {
   summary: string;
+  scores?: DimensionScores;
+  strengths?: string[];
+  weaknesses?: string[];
+  recommendations?: string[];
   issues: AIReviewIssue[];
 }
 

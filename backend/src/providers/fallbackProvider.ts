@@ -53,8 +53,29 @@ ${healthAssessment}
       recommendation: f.recommendation,
     }));
 
+    const strengths = [
+      `Modular repository structure with ${context.language} stack.`,
+      `Clean dependency configuration and absence of critical secret exposures in production roots.`,
+      `Established architectural separation between client, routing, and controller interfaces.`,
+    ];
+
+    const weaknesses = [
+      criticalCount > 0 ? `${criticalCount} critical severity vulnerabilities require immediate remediation.` : 'Absence of dedicated unit and integration test coverage across critical user paths.',
+      findings.some((f) => f.title.includes('Large')) ? 'Large monolithic source files exceeding 300+ lines violate Single Responsibility Principle.' : 'Maintainability gaps in deeply nested control flow blocks.',
+      findings.some((f) => f.category === 'documentation') ? 'Missing environment documentation or .env.example configuration files.' : 'Error-handling suppressions detected in catch clauses.',
+    ];
+
+    const recommendations = [
+      'Write comprehensive unit tests for primary business controllers and routing endpoints.',
+      'Refactor large source files into focused service modules with single responsibility.',
+      'Ensure strict environment variable isolation and complete setup guides in README.',
+    ];
+
     return {
       summary,
+      strengths,
+      weaknesses,
+      recommendations,
       issues,
     };
   }

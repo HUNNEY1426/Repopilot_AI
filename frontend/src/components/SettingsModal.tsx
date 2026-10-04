@@ -150,8 +150,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className="input-text"
               style={{ cursor: 'pointer' }}
             >
-              <option value="gemini-2.5-flash">gemini-2.5-flash (Fast, recommended)</option>
-              <option value="gemini-2.5-pro">gemini-2.5-pro (Deep reasoning)</option>
+              <option value="gemini-3.5-flash">gemini-3.5-flash (Fast, Recommended)</option>
+              <option value="gemini-3.8-flash">gemini-3.8-flash (High reasoning)</option>
+              <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Ultra low latency)</option>
+              <option value="gemini-flash-latest">gemini-flash-latest (Auto latest)</option>
             </select>
           </div>
 

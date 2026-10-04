@@ -169,7 +169,7 @@ export const repoDb = {
       analysis.overall_score,
       JSON.stringify(analysis.scores),
       analysis.summary,
-      JSON.stringify(analysis.metrics),
+      JSON.stringify({ ...analysis.metrics, ai_insights: analysis.ai_insights }),
       analysis.error_message || null,
       analysis.created_at,
       analysis.completed_at || null
@@ -187,7 +187,7 @@ export const repoDb = {
       analysis.overall_score,
       JSON.stringify(analysis.scores),
       analysis.summary,
-      JSON.stringify(analysis.metrics),
+      JSON.stringify({ ...analysis.metrics, ai_insights: analysis.ai_insights }),
       analysis.error_message || null,
       analysis.completed_at || null,
       analysis.id
@@ -199,6 +199,10 @@ export const repoDb = {
     const row = stmt.get(id) as Record<string, unknown> | undefined;
     if (!row) return null;
 
+    const metricsRaw = JSON.parse((row.metrics_json as string) || '{}') as Record<string, any>;
+    const ai_insights = metricsRaw.ai_insights;
+    delete metricsRaw.ai_insights;
+
     return {
       id: row.id as string,
       repository_id: row.repository_id as string,
@@ -207,7 +211,8 @@ export const repoDb = {
       overall_score: row.overall_score as number,
       scores: JSON.parse((row.scores_json as string) || '{}') as DimensionScores,
       summary: (row.summary as string) || '',
-      metrics: JSON.parse((row.metrics_json as string) || '{}') as AnalysisMetrics,
+      metrics: metricsRaw as AnalysisMetrics,
+      ai_insights,
       error_message: row.error_message as string | undefined,
       created_at: row.created_at as string,
       completed_at: row.completed_at as string | undefined,
@@ -219,6 +224,10 @@ export const repoDb = {
     const row = stmt.get(repoId) as Record<string, unknown> | undefined;
     if (!row) return null;
 
+    const metricsRaw = JSON.parse((row.metrics_json as string) || '{}') as Record<string, any>;
+    const ai_insights = metricsRaw.ai_insights;
+    delete metricsRaw.ai_insights;
+
     return {
       id: row.id as string,
       repository_id: row.repository_id as string,
@@ -227,7 +236,8 @@ export const repoDb = {
       overall_score: row.overall_score as number,
       scores: JSON.parse((row.scores_json as string) || '{}') as DimensionScores,
       summary: (row.summary as string) || '',
-      metrics: JSON.parse((row.metrics_json as string) || '{}') as AnalysisMetrics,
+      metrics: metricsRaw as AnalysisMetrics,
+      ai_insights,
       error_message: row.error_message as string | undefined,
       created_at: row.created_at as string,
       completed_at: row.completed_at as string | undefined,
@@ -237,19 +247,26 @@ export const repoDb = {
   listAnalysesForRepo(repoId: string): Analysis[] {
     const stmt = db.prepare('SELECT * FROM analyses WHERE repository_id = ? ORDER BY created_at DESC');
     const rows = stmt.all(repoId) as Record<string, unknown>[];
-    return rows.map((row) => ({
-      id: row.id as string,
-      repository_id: row.repository_id as string,
-      commit_sha: row.commit_sha as string,
-      status: row.status as Analysis['status'],
-      overall_score: row.overall_score as number,
-      scores: JSON.parse((row.scores_json as string) || '{}') as DimensionScores,
-      summary: (row.summary as string) || '',
-      metrics: JSON.parse((row.metrics_json as string) || '{}') as AnalysisMetrics,
-      error_message: row.error_message as string | undefined,
-      created_at: row.created_at as string,
-      completed_at: row.completed_at as string | undefined,
-    }));
+    return rows.map((row) => {
+      const metricsRaw = JSON.parse((row.metrics_json as string) || '{}') as Record<string, any>;
+      const ai_insights = metricsRaw.ai_insights;
+      delete metricsRaw.ai_insights;
+
+      return {
+        id: row.id as string,
+        repository_id: row.repository_id as string,
+        commit_sha: row.commit_sha as string,
+        status: row.status as Analysis['status'],
+        overall_score: row.overall_score as number,
+        scores: JSON.parse((row.scores_json as string) || '{}') as DimensionScores,
+        summary: (row.summary as string) || '',
+        metrics: metricsRaw as AnalysisMetrics,
+        ai_insights,
+        error_message: row.error_message as string | undefined,
+        created_at: row.created_at as string,
+        completed_at: row.completed_at as string | undefined,
+      };
+    });
   },
 
   // Issues

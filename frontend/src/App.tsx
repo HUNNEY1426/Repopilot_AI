@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Header } from './components/Header.js';
 import { HeroConnect } from './components/HeroConnect.js';
 import { HealthOverview } from './components/Dashboard/HealthOverview.js';
+import { AIInsightsPanel } from './components/Dashboard/AIInsightsPanel.js';
 import { ScoreBreakdown } from './components/Dashboard/ScoreBreakdown.js';
 import { ArchitectureDiagram } from './components/Dashboard/ArchitectureDiagram.js';
 import { HistoryChart } from './components/Dashboard/HistoryChart.js';
@@ -238,7 +239,13 @@ export function App() {
   // Filtered issues computation
   const filteredIssues = useMemo(() => {
     return issues.filter((iss) => {
-      if (selectedCategory !== 'all' && iss.category !== selectedCategory) return false;
+      if (selectedCategory !== 'all') {
+        if (selectedCategory === 'maintainability') {
+          if (!['quality', 'architecture', 'documentation'].includes(iss.category)) return false;
+        } else if (iss.category !== selectedCategory) {
+          return false;
+        }
+      }
       if (selectedSeverity !== 'all' && iss.severity !== selectedSeverity) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -305,6 +312,13 @@ export function App() {
           <div>
             {/* Overall Health Card */}
             <HealthOverview analysis={activeAnalysis} repository={activeRepo} />
+
+            {/* AI Executive Review & Insights Panel */}
+            <AIInsightsPanel
+              analysis={activeAnalysis}
+              isScanning={isScanning}
+              onRefresh={() => activeRepo && runAnalysis(activeRepo.id)}
+            />
 
             {/* Quality Dimensions Breakdown */}
             <ScoreBreakdown

@@ -45,6 +45,14 @@ export interface AnalysisMetrics {
   untestedAreas: string[];
 }
 
+export interface AIReviewInsights {
+  provider?: string;
+  model?: string;
+  strengths?: string[];
+  weaknesses?: string[];
+  recommendations?: string[];
+}
+
 export interface Analysis {
   id: string;
   repository_id: string;
@@ -54,6 +62,7 @@ export interface Analysis {
   scores: DimensionScores;
   summary: string;
   metrics: AnalysisMetrics;
+  ai_insights?: AIReviewInsights;
   created_at: string;
   completed_at?: string;
   error_message?: string;

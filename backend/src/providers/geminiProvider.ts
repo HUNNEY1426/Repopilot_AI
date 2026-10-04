@@ -11,7 +11,7 @@ export class GeminiProvider implements AIProvider {
   }
 
   private getModel(): string {
-    return process.env.GEMINI_MODEL || repoDb.getSetting('gemini_model') || 'gemini-flash-latest';
+    return process.env.GEMINI_MODEL || repoDb.getSetting('gemini_model') || 'gemini-3.5-flash';
   }
 
   isAvailable(): boolean {
@@ -38,9 +38,10 @@ export class GeminiProvider implements AIProvider {
   ) {
     const candidateModels = [
       primaryModel,
-      'gemini-flash-latest',
+      'gemini-3.5-flash',
       'gemini-3.5-flash-lite',
       'gemini-3.8-flash',
+      'gemini-flash-latest',
     ];
     const uniqueModels = [...new Set(candidateModels)];
 
@@ -87,9 +88,35 @@ ${JSON.stringify(context.staticFindings.slice(0, 30), null, 2)}
 === Key Source Code Files ===
 ${context.filesSummary}
 
+Perform a rigorous, calibrated multi-dimensional assessment of this codebase.
 Respond ONLY with a valid JSON object matching this schema:
 {
-  "summary": "High-level 2-3 paragraph executive summary of repository health, architectural strengths, and key risks.",
+  "summary": "Detailed multi-paragraph executive assessment of repository health, architectural design, security posture, and maintainability.",
+  "scores": {
+    "overall": 75,
+    "security": 80,
+    "codeQuality": 70,
+    "testing": 40,
+    "architecture": 85,
+    "documentation": 60,
+    "maintainability": 70,
+    "dependencies": 85
+  },
+  "strengths": [
+    "Key architectural or technical strength 1",
+    "Key architectural or technical strength 2",
+    "Key architectural or technical strength 3"
+  ],
+  "weaknesses": [
+    "Key risk or weakness 1",
+    "Key risk or weakness 2",
+    "Key risk or weakness 3"
+  ],
+  "recommendations": [
+    "Actionable strategic recommendation 1",
+    "Actionable strategic recommendation 2",
+    "Actionable strategic recommendation 3"
+  ],
   "issues": [
     {
       "category": "security" | "quality" | "testing" | "architecture" | "documentation" | "dependencies",
@@ -104,10 +131,15 @@ Respond ONLY with a valid JSON object matching this schema:
   ]
 }
 
-Ensure:
-1. Every file_path refers to a real file from the repository.
-2. Clearly distinguish potential issues from confirmed vulnerabilities.
-3. Prioritize high-impact security vulnerabilities and architectural design flaws.
+Score calibration rules (0-100 scale, must be integers):
+- overall: Comprehensive quality & health score.
+- security: Calibrate based on secrets, sanitization, shell execution risks, CORS.
+- codeQuality: Calibrate based on cyclomatic complexity, modularity, error handling.
+- testing: Calibrate based on tests presence and critical path coverage.
+- architecture: Separation of concerns, modularity, layered design.
+- documentation: README quality, setup guides, API reference.
+- maintainability: Long-term extensibility and readability.
+- dependencies: Up-to-date and pinned dependencies.
 `;
 
     try {
@@ -124,6 +156,10 @@ Ensure:
 
       return {
         summary: parsed.summary || 'AI Review completed successfully.',
+        scores: parsed.scores,
+        strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
+        weaknesses: Array.isArray(parsed.weaknesses) ? parsed.weaknesses : [],
+        recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : [],
         issues: Array.isArray(parsed.issues) ? parsed.issues : [],
       };
     } catch (err: any) {

@@ -38,6 +38,8 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
   return (
     <div
       className="glass-panel"
@@ -122,11 +124,30 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
             fontSize: '0.9rem',
             color: 'var(--text-secondary)',
             marginBottom: '16px',
-            lineHeight: 1.5,
+            lineHeight: 1.6,
             whiteSpace: 'pre-line',
           }}
         >
-          {analysis.summary.length > 250 ? analysis.summary.substring(0, 250) + '...' : analysis.summary}
+          {isExpanded || analysis.summary.length <= 260
+            ? analysis.summary
+            : `${analysis.summary.substring(0, 260)}... `}
+          {analysis.summary.length > 260 && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--cyan)',
+                fontWeight: '600',
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+                padding: '0 4px',
+                textDecoration: 'underline',
+              }}
+            >
+              {isExpanded ? 'Show less' : 'Read full AI assessment'}
+            </button>
+          )}
         </p>
 
         {/* Metadata Badges */}

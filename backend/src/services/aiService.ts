@@ -32,7 +32,15 @@ export class AIService {
     language: string;
     files: RepoFile[];
     staticFindings: StaticFinding[];
-  }): Promise<{ summary: string; issues: Omit<Issue, 'id' | 'analysis_id' | 'created_at' | 'status'>[] }> {
+  }): Promise<{
+    summary: string;
+    scores?: DimensionScores;
+    strengths?: string[];
+    weaknesses?: string[];
+    recommendations?: string[];
+    issues: Omit<Issue, 'id' | 'analysis_id' | 'created_at' | 'status'>[];
+    providerName: string;
+  }> {
     const provider = this.getActiveProvider();
 
     // Prepare files summary (truncate large files for token safety)
@@ -116,7 +124,12 @@ export class AIService {
 
     return {
       summary: aiResult.summary,
+      scores: aiResult.scores,
+      strengths: aiResult.strengths,
+      weaknesses: aiResult.weaknesses,
+      recommendations: aiResult.recommendations,
       issues: validIssues,
+      providerName: provider.name,
     };
   }
 

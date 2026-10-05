@@ -276,6 +276,16 @@ Copy \`.env.example\` to \`.env\`.
 `
       },
       {
+        path: '.gitignore',
+        size: 75,
+        content: `node_modules/
+dist/
+.env
+.env.local
+coverage/
+`
+      },
+      {
         path: '.env.example',
         size: 120,
         content: `PORT=4000

@@ -11,7 +11,7 @@ export class GeminiProvider implements AIProvider {
   }
 
   private getModel(): string {
-    return process.env.GEMINI_MODEL || repoDb.getSetting('gemini_model') || 'gemini-3.5-flash';
+    return process.env.GEMINI_MODEL || repoDb.getSetting('gemini_model') || 'gemini-2.5-flash';
   }
 
   isAvailable(): boolean {
@@ -38,10 +38,11 @@ export class GeminiProvider implements AIProvider {
   ) {
     const candidateModels = [
       primaryModel,
-      'gemini-3.5-flash',
-      'gemini-3.5-flash-lite',
-      'gemini-3.8-flash',
-      'gemini-flash-latest',
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-2.5-pro',
+      'gemini-1.5-pro',
     ];
     const uniqueModels = [...new Set(candidateModels)];
 

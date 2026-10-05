@@ -4,7 +4,7 @@ import { repoDb } from '../db/database.js';
 
 export const pullRequestController = {
   async createPullRequest(req: Request, res: Response) {
-    const { id: analysisId } = req.params;
+    const analysisId = req.params.id as string;
     const { issueId, branchName } = req.body;
 
     const analysis = repoDb.getAnalysis(analysisId);
@@ -43,7 +43,7 @@ export const pullRequestController = {
   },
 
   listPullRequests(req: Request, res: Response) {
-    const { id: repoId } = req.params;
+    const repoId = req.params.id as string;
     const prs = repoDb.listPullRequestsForRepo(repoId);
     res.json(prs);
   },

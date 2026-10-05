@@ -7,7 +7,7 @@ import type { Suggestion } from '../types/index.js';
 
 export const issueController = {
   getIssue(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const issue = repoDb.getIssue(id);
     if (!issue) {
       return res.status(404).json({ error: 'Issue not found' });
@@ -16,7 +16,7 @@ export const issueController = {
   },
 
   async generateFix(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const issue = repoDb.getIssue(id);
     if (!issue) {
       return res.status(404).json({ error: 'Issue not found' });
@@ -83,7 +83,7 @@ export const issueController = {
   },
 
   approveFix(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const issue = repoDb.getIssue(id);
     if (!issue) return res.status(404).json({ error: 'Issue not found' });
 
@@ -95,7 +95,7 @@ export const issueController = {
   },
 
   rejectFix(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const issue = repoDb.getIssue(id);
     if (!issue) return res.status(404).json({ error: 'Issue not found' });
 

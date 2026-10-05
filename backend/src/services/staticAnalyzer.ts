@@ -3,6 +3,7 @@ import type {
   StaticFinding,
   DimensionScores,
   AnalysisMetrics,
+  RepoTreeNode,
 } from '../types/index.js';
 import { isTestFile, isDocumentationFile } from '../utils/fileFilter.js';
 
@@ -13,7 +14,7 @@ export interface StaticAnalysisResult {
 }
 
 export class StaticAnalyzer {
-  analyze(files: RepoFile[]): StaticAnalysisResult {
+  analyze(files: RepoFile[], tree?: RepoTreeNode[]): StaticAnalysisResult {
     const findings: StaticFinding[] = [];
 
     let totalLinesAnalyzed = 0;
@@ -33,30 +34,56 @@ export class StaticAnalyzer {
     const testedAreas = new Set<string>();
     const criticalAreasPresent = new Set<string>();
 
+    // 0. Preliminary inspection of full repository tree (if provided)
+    if (tree && Array.isArray(tree)) {
+      for (const node of tree) {
+        const lowerPath = node.path.toLowerCase();
+        const baseName = lowerPath.split('/').pop() || '';
+
+        if (baseName === '.gitignore') {
+          hasGitignore = true;
+          // Assume it excludes .env unless inspection of fetched content proves otherwise
+          gitignoreIgnoresEnv = true;
+        }
+        if (baseName === '.env.example' || baseName === '.env.sample' || baseName === 'sample.env') {
+          hasEnvExample = true;
+        }
+        if (baseName.startsWith('readme')) {
+          hasReadme = true;
+        }
+        if (isTestFile(node.path)) {
+          testFilesCount++;
+        }
+        if (isDocumentationFile(node.path)) {
+          docFilesCount++;
+        }
+      }
+    }
+
     // 1. First pass: detect global files (.gitignore, .env.example, README, package.json)
     for (const file of files) {
       const lowerPath = file.path.toLowerCase();
-      if (lowerPath === '.gitignore') {
+      const baseName = lowerPath.split('/').pop() || '';
+
+      if (baseName === '.gitignore') {
         hasGitignore = true;
-        if (file.content.includes('.env')) {
-          gitignoreIgnoresEnv = true;
-        }
+        gitignoreIgnoresEnv = file.content.includes('.env');
       }
-      if (lowerPath === '.env.example' || lowerPath === '.env.sample' || lowerPath === 'sample.env') {
+      if (baseName === '.env.example' || baseName === '.env.sample' || baseName === 'sample.env') {
         hasEnvExample = true;
       }
-      if (lowerPath.startsWith('readme')) {
+      if (baseName.startsWith('readme')) {
         hasReadme = true;
       }
       if (isTestFile(file.path)) {
-        testFilesCount++;
+        if (!tree) testFilesCount++;
         // track tested area
         if (lowerPath.includes('auth')) testedAreas.add('Authentication');
         if (lowerPath.includes('user')) testedAreas.add('User Controller');
         if (lowerPath.includes('pay') || lowerPath.includes('checkout')) testedAreas.add('Payments');
         if (lowerPath.includes('order')) testedAreas.add('Orders');
       }
-      if (isDocumentationFile(file.path)) {
+      if (isDocumentationFile(file.path) && !tree) {
         docFilesCount++;
       }
     }
@@ -133,9 +160,10 @@ export class StaticAnalyzer {
         ruleId: 'ENV-001',
         category: 'security',
         severity: 'high',
-        title: '.gitignore does not exclude .env files',
-        description:
-          'Repository .gitignore is missing or does not include ".env", which risks accidentally committing secret credentials.',
+        title: !hasGitignore ? 'Missing .gitignore file' : '.gitignore does not exclude .env files',
+        description: !hasGitignore
+          ? 'Repository is missing a .gitignore file, which risks accidentally committing node_modules, build artifacts, and secret credentials.'
+          : 'Repository .gitignore is present but does not include ".env", which risks accidentally committing secret credentials.',
         file: hasGitignore ? '.gitignore' : 'README.md',
         line: 1,
         codeSnippet: hasGitignore ? '# Missing .env in .gitignore' : '# No .gitignore found',

@@ -24,6 +24,8 @@ test('FileFilter - should identify supported source files', () => {
   assert.strictEqual(isSupportedSourceFile('server.js'), true);
   assert.strictEqual(isSupportedSourceFile('src/index.ts'), true);
   assert.strictEqual(isSupportedSourceFile('package.json'), true);
+  assert.strictEqual(isSupportedSourceFile('.gitignore'), true);
+  assert.strictEqual(isSupportedSourceFile('.env.example'), true);
   assert.strictEqual(isSupportedSourceFile('binary.exe'), false);
 });
 

@@ -164,7 +164,21 @@ export class GitHubService {
 
     // Prioritize high-signal files (package manifests, config, entry points, src files)
     const prioritized = filteredFilesToFetch.sort((a, b) => {
-      const priorityNames = ['package.json', 'readme.md', 'server.js', 'index.js', 'index.ts', 'app.js', 'app.ts'];
+      const priorityNames = [
+        'package.json',
+        'readme.md',
+        '.gitignore',
+        '.env.example',
+        '.env.sample',
+        'sample.env',
+        'tsconfig.json',
+        'server.js',
+        'server.ts',
+        'index.js',
+        'index.ts',
+        'app.js',
+        'app.ts',
+      ];
       const aName = a.path.split('/').pop()?.toLowerCase() || '';
       const bName = b.path.split('/').pop()?.toLowerCase() || '';
       const aP = priorityNames.indexOf(aName);

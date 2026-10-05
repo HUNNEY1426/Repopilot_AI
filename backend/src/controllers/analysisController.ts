@@ -7,7 +7,7 @@ import type { Analysis, Issue } from '../types/index.js';
 
 export const analysisController = {
   async triggerAnalysis(req: Request, res: Response) {
-    const { id: repoId } = req.params;
+    const repoId = req.params.id as string;
 
     const repo = repoDb.getRepository(repoId);
     if (!repo) {
@@ -55,7 +55,7 @@ export const analysisController = {
       const scanResult = await repositoryScanner.scan(repo.owner, repo.name, repo.default_branch);
 
       // 2. Run static analysis
-      const staticResult = staticAnalyzer.analyze(scanResult.files);
+      const staticResult = staticAnalyzer.analyze(scanResult.files, scanResult.tree);
 
       // 3. Run AI Review Engine with Hallucination Protection
       const aiResult = await aiService.reviewRepository({
@@ -107,7 +107,7 @@ export const analysisController = {
         summary: aiResult.summary,
         ai_insights: {
           provider: aiResult.providerName,
-          model: repoDb.getSetting('gemini_model') || 'gemini-3.5-flash',
+          model: repoDb.getSetting('gemini_model') || 'gemini-2.5-flash',
           strengths: aiResult.strengths || [],
           weaknesses: aiResult.weaknesses || [],
           recommendations: aiResult.recommendations || [],
@@ -141,7 +141,7 @@ export const analysisController = {
   },
 
   getAnalysis(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const analysis = repoDb.getAnalysis(id);
     if (!analysis) {
       return res.status(404).json({ error: 'Analysis not found' });
@@ -150,7 +150,7 @@ export const analysisController = {
   },
 
   getAnalysisIssues(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const category = req.query.category as string | undefined;
     const severity = req.query.severity as string | undefined;
     const q = req.query.q as string | undefined;
@@ -160,7 +160,7 @@ export const analysisController = {
   },
 
   getAnalysisMetrics(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const analysis = repoDb.getAnalysis(id);
     if (!analysis) {
       return res.status(404).json({ error: 'Analysis not found' });
@@ -174,7 +174,7 @@ export const analysisController = {
   },
 
   getRepoHistory(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const history = repoDb.listAnalysesForRepo(id);
     res.json(history);
   },

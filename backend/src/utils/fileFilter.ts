@@ -121,6 +121,26 @@ export function isSensitiveFile(filePath: string): boolean {
 
 export function isSupportedSourceFile(filePath: string): boolean {
   const normalized = filePath.replace(/\\/g, '/').toLowerCase();
+  const fileName = normalized.split('/').pop() || '';
+
+  const supportedConfigFilenames = new Set([
+    '.gitignore',
+    '.env.example',
+    '.env.sample',
+    'sample.env',
+    'dockerfile',
+    'procfile',
+    'license',
+    'makefile',
+    '.editorconfig',
+    '.eslintignore',
+    '.prettierignore',
+  ]);
+
+  if (supportedConfigFilenames.has(fileName) || fileName.endsWith('.gitignore')) {
+    return true;
+  }
+
   const supportedExtensions = [
     '.js',
     '.jsx',
@@ -155,8 +175,11 @@ export function isTestFile(filePath: string): boolean {
   return (
     normalized.includes('__tests__') ||
     normalized.includes('/tests/') ||
+    normalized.startsWith('tests/') ||
     normalized.includes('/test/') ||
+    normalized.startsWith('test/') ||
     normalized.includes('/spec/') ||
+    normalized.startsWith('spec/') ||
     /\.(test|spec)\.(js|jsx|ts|tsx|py|go|rb)$/i.test(normalized) ||
     normalized.endsWith('_test.go') ||
     normalized.endsWith('test.py')
@@ -172,6 +195,7 @@ export function isDocumentationFile(filePath: string): boolean {
     fileName.startsWith('license') ||
     fileName.startsWith('changelog') ||
     fileName.startsWith('code_of_conduct') ||
+    normalized.startsWith('docs/') ||
     normalized.includes('/docs/') ||
     fileName.endsWith('.md')
   );

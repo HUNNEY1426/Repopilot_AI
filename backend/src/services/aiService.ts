@@ -3,7 +3,7 @@ import { geminiProvider } from '../providers/geminiProvider.js';
 import { openAIProvider } from '../providers/openaiProvider.js';
 import { fallbackProvider } from '../providers/fallbackProvider.js';
 import { repoDb } from '../db/database.js';
-import type { RepoFile, StaticFinding, Issue } from '../types/index.js';
+import type { RepoFile, StaticFinding, Issue, DimensionScores } from '../types/index.js';
 
 export class AIService {
   getActiveProvider(): AIProvider {

@@ -24,7 +24,7 @@ export const repositoryController = {
   },
 
   getRepository(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const repo = repoDb.getRepository(id);
     if (!repo) {
       return res.status(404).json({ error: 'Repository not found' });
@@ -93,7 +93,7 @@ export const repositoryController = {
   },
 
   deleteRepository(req: Request, res: Response) {
-    const { id } = req.params;
+    const id = req.params.id as string;
     repoDb.deleteRepository(id);
     res.json({ success: true, message: 'Repository deleted' });
   },

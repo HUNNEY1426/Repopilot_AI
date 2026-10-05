@@ -191,8 +191,8 @@ app.get('/', (req: Request, res: Response) => {
     </p>
 
     <div class="actions">
-      <a href="http://localhost:5173" class="btn-primary">
-        🚀 Open Frontend App (localhost:5173)
+      <a href="/" class="btn-primary">
+        🚀 Open Frontend App
       </a>
       <a href="/health" class="btn-secondary">
         🩺 Health Check API
@@ -227,7 +227,7 @@ app.get('/', (req: Request, res: Response) => {
   res.json({
     status: 'ok',
     service: 'RepoPilot AI Backend',
-    message: 'Backend API is running. Access the web app at http://localhost:5173',
+    message: 'Backend API is running.',
     version: '1.0.0',
     endpoints: [
       '/health',
@@ -293,7 +293,13 @@ function seedInitialData() {
 
 seedInitialData();
 
-app.listen(PORT, () => {
-  console.log(`🚀 RepoPilot Backend running on http://localhost:${PORT}`);
-  console.log(`📡 Ready to scan repositories and orchestrate AI reviews`);
-});
+// Only start listening when not running on Vercel (serverless)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 RepoPilot Backend running on http://localhost:${PORT}`);
+    console.log(`📡 Ready to scan repositories and orchestrate AI reviews`);
+  });
+}
+
+// Export for Vercel serverless adapter
+export default app;

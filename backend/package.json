@@ -2,7 +2,7 @@
   "name": "repopilot-backend",
   "version": "1.0.0",
   "description": "AI GitHub Project Reviewer Backend Engine",
-  "main": "dist/server.js",
+  "main": "index.js",
   "engines": {
     "node": ">=22.0.0"
   },

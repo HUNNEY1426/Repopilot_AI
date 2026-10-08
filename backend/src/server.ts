@@ -258,8 +258,9 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
-// Mount API routes
+// Mount API routes (both /api and / for Vercel rewrite compatibility)
 app.use('/api', apiRouter);
+app.use('/', apiRouter);
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -271,35 +272,51 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 // Pre-seed demo repositories if database is fresh
 function seedInitialData() {
-  const existing = repoDb.listRepositories();
-  if (existing.length === 0) {
-    console.log('Seeding initial demo repositories...');
-    for (const demo of DEMO_REPOSITORIES) {
-      repoDb.createRepository({
-        id: demo.id,
-        github_id: `gh-${demo.id}`,
-        owner: demo.owner,
-        name: demo.name,
-        url: demo.url,
-        default_branch: demo.defaultBranch,
-        language: demo.language,
-        description: demo.description,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+  try {
+    const existing = repoDb.listRepositories();
+    if (existing.length === 0) {
+      console.log('Seeding initial demo repositories...');
+      for (const demo of DEMO_REPOSITORIES) {
+        repoDb.createRepository({
+          id: demo.id,
+          github_id: `gh-${demo.id}`,
+          owner: demo.owner,
+          name: demo.name,
+          url: demo.url,
+          default_branch: demo.defaultBranch,
+          language: demo.language,
+          description: demo.description,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      }
     }
+  } catch (err) {
+    console.warn('Initial seed error:', err);
   }
 }
 
 seedInitialData();
 
-// Only start listening when not running on Vercel (serverless)
-if (!process.env.VERCEL) {
+// Only start listening when not running on Vercel or Serverless
+const isServerless = Boolean(
+  process.env.VERCEL ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  process.env.NOW_REGION
+);
+
+if (!isServerless) {
   app.listen(PORT, () => {
     console.log(`🚀 RepoPilot Backend running on http://localhost:${PORT}`);
     console.log(`📡 Ready to scan repositories and orchestrate AI reviews`);
   });
 }
 
-// Export for Vercel serverless adapter
+// Support both CommonJS require() and ES module default export
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = app;
+  (module.exports as any).default = app;
+}
+
 export default app;
+

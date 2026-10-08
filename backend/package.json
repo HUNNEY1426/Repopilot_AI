@@ -2,11 +2,14 @@
   "name": "repopilot-backend",
   "version": "1.0.0",
   "description": "AI GitHub Project Reviewer Backend Engine",
-  "main": "src/server.ts",
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "tsx src/server.ts",
+    "start": "node dist/server.js",
     "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {

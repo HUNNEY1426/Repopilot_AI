@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "RepoPilot AI - Automated GitHub Code Review & Remediation Platform",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "engines": {
     "node": ">=22.0.0"
   },
@@ -12,5 +16,12 @@
     "dev:backend": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend",
     "dev": "node run-dev.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^2.24.0",
+    "cors": "^2.8.5",
+    "diff": "^7.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
   }
 }

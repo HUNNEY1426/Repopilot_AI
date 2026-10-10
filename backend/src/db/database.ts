@@ -28,35 +28,39 @@ try {
     process.env.NOW_REGION
   );
 
-  // In Serverless environments like Vercel, the root directory is strictly read-only.
-  // Use os.tmpdir() (/tmp) where writing files is permitted.
-  const dbDir = isServerless ? os.tmpdir() : path.resolve(process.cwd(), 'data');
-  if (!fs.existsSync(dbDir)) {
-    try {
-      fs.mkdirSync(dbDir, { recursive: true });
-    } catch {
-      // Ignore if cannot create
+  // In Serverless environments (like Vercel or AWS Lambda), native SQLite/DatabaseSync
+  // causes segmentation faults, uncatchable process crashes, or file locks on ephemeral /tmp.
+  // We safely use the resilient in-memory stores for serverless deployments.
+  if (isServerless) {
+    db = null;
+  } else {
+    const dbDir = path.resolve(process.cwd(), 'data');
+    if (!fs.existsSync(dbDir)) {
+      try {
+        fs.mkdirSync(dbDir, { recursive: true });
+      } catch {
+        // Ignore if cannot create
+      }
     }
-  }
 
-  const dbPath = path.join(dbDir, 'repopilot.db');
+    const dbPath = path.join(dbDir, 'repopilot.db');
 
-  // Dynamically require node:sqlite so environments without it won't fail at import time
-  let DatabaseSyncClass: any = null;
-  try {
-    const sqliteModule = require('node:sqlite');
-    DatabaseSyncClass = sqliteModule?.DatabaseSync;
-  } catch {
-    // node:sqlite not supported in this runtime
-  }
-
-  if (DatabaseSyncClass) {
-    db = new DatabaseSyncClass(dbPath);
+    // Dynamically require node:sqlite so environments without it won't fail at import time
+    let DatabaseSyncClass: any = null;
     try {
-      db.exec('PRAGMA journal_mode = WAL;');
+      const sqliteModule = require('node:sqlite');
+      DatabaseSyncClass = sqliteModule?.DatabaseSync;
     } catch {
-      // Ignore pragma error
+      // node:sqlite not supported in this runtime
     }
+
+    if (DatabaseSyncClass) {
+      db = new DatabaseSyncClass(dbPath);
+      try {
+        db.exec('PRAGMA journal_mode = WAL;');
+      } catch {
+        // Ignore pragma error
+      }
 
     // Initialize schema
     db.exec(`
@@ -146,6 +150,7 @@ try {
       );
     `);
   }
+}
 } catch (err) {
   console.warn('SQLite init warning (operating in resilient In-Memory mode):', err);
   db = null;

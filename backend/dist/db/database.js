@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.repoDb = void 0;
 const node_path_1 = __importDefault(require("node:path"));
 const node_fs_1 = __importDefault(require("node:fs"));
-const node_os_1 = __importDefault(require("node:os"));
 // In-Memory Data Stores (used as primary or fallback)
 const memoryRepositories = new Map();
 const memoryAnalyses = new Map();
@@ -19,37 +18,42 @@ try {
     const isServerless = Boolean(process.env.VERCEL ||
         process.env.AWS_LAMBDA_FUNCTION_NAME ||
         process.env.NOW_REGION);
-    // In Serverless environments like Vercel, the root directory is strictly read-only.
-    // Use os.tmpdir() (/tmp) where writing files is permitted.
-    const dbDir = isServerless ? node_os_1.default.tmpdir() : node_path_1.default.resolve(process.cwd(), 'data');
-    if (!node_fs_1.default.existsSync(dbDir)) {
+    // In Serverless environments (like Vercel or AWS Lambda), native SQLite/DatabaseSync
+    // causes segmentation faults, uncatchable process crashes, or file locks on ephemeral /tmp.
+    // We safely use the resilient in-memory stores for serverless deployments.
+    if (isServerless) {
+        db = null;
+    }
+    else {
+        const dbDir = node_path_1.default.resolve(process.cwd(), 'data');
+        if (!node_fs_1.default.existsSync(dbDir)) {
+            try {
+                node_fs_1.default.mkdirSync(dbDir, { recursive: true });
+            }
+            catch {
+                // Ignore if cannot create
+            }
+        }
+        const dbPath = node_path_1.default.join(dbDir, 'repopilot.db');
+        // Dynamically require node:sqlite so environments without it won't fail at import time
+        let DatabaseSyncClass = null;
         try {
-            node_fs_1.default.mkdirSync(dbDir, { recursive: true });
+            const sqliteModule = require('node:sqlite');
+            DatabaseSyncClass = sqliteModule?.DatabaseSync;
         }
         catch {
-            // Ignore if cannot create
+            // node:sqlite not supported in this runtime
         }
-    }
-    const dbPath = node_path_1.default.join(dbDir, 'repopilot.db');
-    // Dynamically require node:sqlite so environments without it won't fail at import time
-    let DatabaseSyncClass = null;
-    try {
-        const sqliteModule = require('node:sqlite');
-        DatabaseSyncClass = sqliteModule?.DatabaseSync;
-    }
-    catch {
-        // node:sqlite not supported in this runtime
-    }
-    if (DatabaseSyncClass) {
-        db = new DatabaseSyncClass(dbPath);
-        try {
-            db.exec('PRAGMA journal_mode = WAL;');
-        }
-        catch {
-            // Ignore pragma error
-        }
-        // Initialize schema
-        db.exec(`
+        if (DatabaseSyncClass) {
+            db = new DatabaseSyncClass(dbPath);
+            try {
+                db.exec('PRAGMA journal_mode = WAL;');
+            }
+            catch {
+                // Ignore pragma error
+            }
+            // Initialize schema
+            db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         github_id TEXT,
@@ -135,6 +139,7 @@ try {
         value TEXT
       );
     `);
+        }
     }
 }
 catch (err) {

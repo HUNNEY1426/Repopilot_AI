@@ -24,12 +24,13 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
     <div
       className="glass-panel"
       style={{
-        padding: '24px',
+        padding: 'clamp(16px, 3vw, 24px)',
         marginBottom: '24px',
         border: '1px solid rgba(6, 182, 212, 0.25)',
         background: 'linear-gradient(180deg, rgba(6, 182, 212, 0.04) 0%, rgba(15, 23, 42, 0.6) 100%)',
         position: 'relative',
         overflow: 'hidden',
+        width: '100%',
       }}
     >
       {/* Decorative top accent glow */}
@@ -56,7 +57,7 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
           gap: '12px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1 1 280px', minWidth: 0 }}>
           <div
             style={{
               width: '32px',
@@ -67,16 +68,26 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
             <Sparkles size={18} color="var(--cyan)" />
           </div>
-          <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              AI Executive Review & Insights
+          <div style={{ minWidth: 0 }}>
+            <h3
+              style={{
+                fontSize: 'clamp(1rem, 2.5vw, 1.15rem)',
+                fontWeight: '700',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <span>AI Executive Review & Insights</span>
               <span
                 style={{
-                  fontSize: '0.7rem',
+                  fontSize: '0.675rem',
                   padding: '2px 8px',
                   borderRadius: '12px',
                   background: 'rgba(6, 182, 212, 0.15)',
@@ -86,6 +97,7 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 <Cpu size={11} />
@@ -108,9 +120,10 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
               alignItems: 'center',
               gap: '6px',
               fontSize: '0.8rem',
+              flexShrink: 0,
             }}
           >
-            <RefreshCw size={13} className={isScanning ? 'spin' : ''} />
+            <RefreshCw size={13} className={isScanning ? 'animate-spin' : ''} />
             {isScanning ? 'Analyzing with AI...' : 'Re-run AI Review'}
           </button>
         )}
@@ -120,8 +133,8 @@ export const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '16px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
+          gap: '14px',
         }}
       >
         {/* 1. Key Strengths */}

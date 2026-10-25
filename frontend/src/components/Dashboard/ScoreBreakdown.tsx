@@ -98,10 +98,26 @@ export const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
-        <div>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: '700' }}>Quality & Health Indicators</h3>
+    <div
+      className="glass-panel"
+      style={{
+        padding: 'clamp(16px, 3vw, 24px)',
+        marginBottom: '24px',
+        width: '100%',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '18px',
+          flexWrap: 'wrap',
+          gap: '10px',
+        }}
+      >
+        <div style={{ flex: '1 1 240px' }}>
+          <h3 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.15rem)', fontWeight: '700' }}>Quality & Health Indicators</h3>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
             Calibrated multi-dimensional assessment (0–100). Click any indicator to inspect issues.
           </p>
@@ -110,7 +126,7 @@ export const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
           <button
             onClick={() => onSelectCategory && onSelectCategory('all')}
             className="btn btn-secondary btn-sm"
-            style={{ fontSize: '0.75rem', padding: '4px 10px' }}
+            style={{ fontSize: '0.75rem', padding: '6px 12px' }}
           >
             Clear Indicator Filter ({selectedCategory})
           </button>
@@ -120,8 +136,8 @@ export const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '16px',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))',
+          gap: '14px',
         }}
       >
         {items.map((item) => {

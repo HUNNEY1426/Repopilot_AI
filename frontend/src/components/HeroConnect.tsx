@@ -31,16 +31,9 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
   };
 
   return (
-    <div
-      className="glass-panel"
-      style={{
-        padding: '36px',
-        marginBottom: '32px',
-        background: 'linear-gradient(180deg, rgba(14, 19, 31, 0.8) 0%, rgba(9, 12, 20, 0.9) 100%)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+
+
+    <div className="glass-panel hero-wrapper">
       {/* Background ambient neon glow */}
       <div
         style={{
@@ -55,7 +48,7 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
         }}
       />
 
-      <div style={{ maxWidth: '820px', margin: '0 auto', textAlign: 'center' }}>
+      <div style={{ maxWidth: '820px', margin: '0 auto', textAlign: 'center', width: '100%' }}>
         <div
           style={{
             display: 'inline-flex',
@@ -66,25 +59,28 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
             background: 'rgba(6, 182, 212, 0.1)',
             border: '1px solid rgba(6, 182, 212, 0.25)',
             color: 'var(--cyan)',
-            fontSize: '0.8rem',
+            fontSize: 'clamp(0.725rem, 2vw, 0.8rem)',
             fontWeight: '600',
             marginBottom: '16px',
+            maxWidth: '100%',
           }}
         >
-          <Sparkles size={14} />
-          AI-Powered Full Repository Assessment & Fix Generation
+          <Sparkles size={14} style={{ flexShrink: 0 }} />
+          <span>AI-Powered Full Repository Assessment & Fix Generation</span>
         </div>
 
         <h1
           style={{
-            fontSize: '2.5rem',
+            fontSize: 'clamp(1.4rem, 4.5vw, 2.5rem)',
             fontWeight: '800',
             letterSpacing: '-0.03em',
-            lineHeight: 1.15,
-            marginBottom: '14px',
+            lineHeight: 1.2,
+            marginBottom: '12px',
             background: 'linear-gradient(135deg, #ffffff 30%, #94a3b8 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
           }}
         >
           Inspect, Review & Remediate Any GitHub Repository
@@ -92,10 +88,11 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
 
         <p
           style={{
-            fontSize: '1rem',
+            fontSize: 'clamp(0.85rem, 1.8vw, 0.975rem)',
             color: 'var(--text-secondary)',
-            marginBottom: '28px',
+            marginBottom: '24px',
             lineHeight: 1.6,
+            wordBreak: 'break-word',
           }}
         >
           RepoPilot scans repository architecture, detects critical security vulnerabilities, evaluates code quality,
@@ -103,41 +100,31 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
         </p>
 
         {/* Input Bar */}
-        <form onSubmit={handleSubmit} style={{ position: 'relative', marginBottom: '24px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: '#080c14',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '14px',
-              padding: '6px 8px 6px 16px',
-              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(6, 182, 212, 0.15)',
-              transition: 'border-color 0.2s',
-            }}
-          >
-            <Search size={20} color="var(--text-muted)" style={{ marginRight: '12px', flexShrink: 0 }} />
-            <input
-              type="text"
-              placeholder="Paste GitHub URL (e.g., https://github.com/expressjs/express or owner/repo)..."
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              disabled={isConnecting}
-              style={{
-                flex: 1,
-                background: 'transparent',
-                border: 'none',
-                color: '#fff',
-                fontSize: '0.95rem',
-                outline: 'none',
-                fontFamily: 'inherit',
-              }}
-            />
+        <form onSubmit={handleSubmit} style={{ position: 'relative', marginBottom: '24px', width: '100%' }}>
+          <div className="hero-search-form">
+            <div className="hero-search-input-wrap">
+              <Search size={18} color="var(--text-muted)" style={{ marginRight: '10px', flexShrink: 0 }} />
+              <input
+                type="text"
+                placeholder="Paste GitHub URL (e.g. owner/repo)..."
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                disabled={isConnecting}
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  fontSize: '0.925rem',
+                  outline: 'none',
+                  fontFamily: 'inherit',
+                }}
+              />
+            </div>
             <button
               type="submit"
               disabled={isConnecting || !urlInput.trim()}
-              className="btn btn-primary"
-              style={{ borderRadius: '10px', padding: '10px 22px' }}
+              className="btn btn-primary hero-search-submit-btn"
             >
               {isConnecting ? (
                 <>
@@ -172,7 +159,7 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
 
         {/* 1-Click Demo Repositories */}
         {demoRepos.length > 0 && (
-          <div>
+          <div style={{ width: '100%' }}>
             <div
               style={{
                 fontSize: '0.75rem',
@@ -190,8 +177,9 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '12px',
+                gap: '10px',
                 flexWrap: 'wrap',
+                width: '100%',
               }}
             >
               {demoRepos.map((demo) => {
@@ -201,18 +189,11 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
                     key={demo.id}
                     onClick={() => onSelectDemo(demo.id)}
                     disabled={isConnecting}
+                    className="demo-button-chip"
                     style={{
                       background: isVuln ? 'rgba(244, 63, 94, 0.08)' : 'rgba(16, 185, 129, 0.08)',
-                      border: `1px solid ${isVuln ? 'rgba(244, 63, 94, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`,
-                      borderRadius: '10px',
-                      padding: '8px 14px',
-                      color: 'var(--text-main)',
-                      fontSize: '0.825rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
+                      borderColor: isVuln ? 'rgba(244, 63, 94, 0.25)' : 'rgba(16, 185, 129, 0.25)',
+                      flex: '1 1 200px',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
@@ -224,14 +205,14 @@ export const HeroConnect: React.FC<HeroConnectProps> = ({
                     }}
                   >
                     {isVuln ? (
-                      <AlertTriangle size={15} color="var(--critical)" />
+                      <AlertTriangle size={15} color="var(--critical)" style={{ flexShrink: 0 }} />
                     ) : (
-                      <ShieldCheck size={15} color="var(--success)" />
+                      <ShieldCheck size={15} color="var(--success)" style={{ flexShrink: 0 }} />
                     )}
-                    <span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       <strong>{demo.name}</strong> ({demo.language})
                     </span>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', flexShrink: 0 }}>
                       {demo.filesCount} files
                     </span>
                   </button>

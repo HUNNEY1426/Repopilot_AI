@@ -298,7 +298,14 @@ export function App() {
         isScanning={isScanning}
       />
 
-      <main className="container" style={{ flex: 1, padding: '32px 24px' }}>
+      <main
+        className="container"
+        style={{
+          flex: 1,
+          paddingTop: 'clamp(16px, 3vw, 32px)',
+          paddingBottom: 'clamp(24px, 4vw, 48px)',
+        }}
+      >
         {/* Connect Repository Hero */}
         <HeroConnect
           onConnectUrl={handleConnectUrl}
@@ -345,17 +352,19 @@ export function App() {
             />
 
             {/* Issues Section */}
-            <div id="issues-section" style={{ marginTop: '36px' }}>
+            <div id="issues-section" style={{ marginTop: '32px' }}>
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  marginBottom: '20px',
+                  marginBottom: '16px',
+                  flexWrap: 'wrap',
+                  gap: '8px',
                 }}
               >
                 <div>
-                  <h3 style={{ fontSize: '1.4rem', fontWeight: '800' }}>
+                  <h3 style={{ fontSize: 'clamp(1.15rem, 3vw, 1.4rem)', fontWeight: '800' }}>
                     Detected Issues & Remediation Opportunities
                   </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -394,7 +403,7 @@ export function App() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        padding: '16px 20px',
+                        padding: '12px 16px',
                         background: 'rgba(255, 255, 255, 0.02)',
                         border: '1px solid var(--border-subtle)',
                         borderRadius: '12px',
@@ -403,13 +412,13 @@ export function App() {
                         gap: '12px',
                       }}
                     >
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                         Showing <strong>{(currentPage - 1) * PAGE_SIZE + 1}</strong> –{' '}
                         <strong>{Math.min(currentPage * PAGE_SIZE, filteredIssues.length)}</strong> of{' '}
                         <strong>{filteredIssues.length}</strong> findings
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                         <button
                           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                           disabled={currentPage === 1}
@@ -419,7 +428,7 @@ export function App() {
                           Previous
                         </button>
 
-                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', padding: '0 8px' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', padding: '0 4px' }}>
                           Page <strong style={{ color: '#fff' }}>{currentPage}</strong> of{' '}
                           <strong style={{ color: '#fff' }}>{totalPages}</strong>
                         </span>

@@ -224,15 +224,25 @@ export const PullRequestModal: React.FC<PullRequestModalProps> = ({
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                <button type="button" onClick={onClose} className="btn btn-secondary btn-sm">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', flexWrap: 'wrap', marginTop: '16px' }}>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="btn btn-secondary btn-sm"
+                  style={{ flex: '1 1 auto', minWidth: '100px', justifyContent: 'center' }}
+                >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting || !branchName.trim()}
                   className="btn btn-primary btn-sm"
-                  style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)' }}
+                  style={{
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
+                    flex: '1 1 auto',
+                    minWidth: '160px',
+                    justifyContent: 'center',
+                  }}
                 >
                   {isSubmitting ? (
                     <>

@@ -80,7 +80,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* Active AI Provider */}
           <div style={{ marginBottom: '20px' }}>
             <label className="input-label">Preferred Review Engine</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))',
+                gap: '10px',
+              }}
+            >
               {[
                 { id: 'gemini', label: 'Google Gemini', desc: 'Recommended: gemini-2.5-flash' },
                 { id: 'openai', label: 'OpenAI / Groq', desc: 'GPT-4o or compatible' },
@@ -98,6 +104,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     color: activeProvider === prov.id ? '#fff' : 'var(--text-secondary)',
                     textAlign: 'left',
                     cursor: 'pointer',
+                    minHeight: '60px',
                   }}
                 >
                   <div style={{ fontSize: '0.85rem', fontWeight: '600' }}>{prov.label}</div>

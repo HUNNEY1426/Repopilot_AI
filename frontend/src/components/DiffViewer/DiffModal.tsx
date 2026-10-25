@@ -219,8 +219,8 @@ export const DiffModal: React.FC<DiffModalProps> = ({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '1px',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+                gap: '8px',
                 background: 'var(--border-subtle)',
                 borderRadius: '8px',
                 overflow: 'hidden',
@@ -229,21 +229,21 @@ export const DiffModal: React.FC<DiffModalProps> = ({
               }}
             >
               {/* Original */}
-              <div style={{ background: '#0a0d14', padding: '14px', overflowX: 'auto' }}>
+              <div style={{ background: '#0a0d14', padding: '14px', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
                 <div style={{ color: 'var(--critical)', fontWeight: '600', marginBottom: '8px' }}>
                   Original Code
                 </div>
-                <pre style={{ margin: 0, color: '#f87171', whiteSpace: 'pre-wrap' }}>
+                <pre style={{ margin: 0, color: '#f87171', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                   {suggestion?.original_code || 'No original snippet'}
                 </pre>
               </div>
 
               {/* Suggested */}
-              <div style={{ background: '#0a0d14', padding: '14px', overflowX: 'auto' }}>
+              <div style={{ background: '#0a0d14', padding: '14px', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
                 <div style={{ color: 'var(--success)', fontWeight: '600', marginBottom: '8px' }}>
                   AI Proposed Fix
                 </div>
-                <pre style={{ margin: 0, color: '#34d399', whiteSpace: 'pre-wrap' }}>
+                <pre style={{ margin: 0, color: '#34d399', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                   {suggestion?.suggested_code || 'No replacement generated'}
                 </pre>
               </div>
@@ -259,6 +259,7 @@ export const DiffModal: React.FC<DiffModalProps> = ({
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.8rem',
                 lineHeight: 1.5,
+                WebkitOverflowScrolling: 'touch',
               }}
             >
               {diffLines.length > 0 ? (
@@ -315,11 +316,19 @@ export const DiffModal: React.FC<DiffModalProps> = ({
         </div>
 
         {/* Footer Actions - Section 21 & 23 Human Approval Flow */}
-        <div className="modal-footer">
+        <div
+          className="modal-footer"
+          style={{
+            flexWrap: 'wrap',
+            gap: '8px',
+            justifyContent: 'flex-end',
+          }}
+        >
           <button
             onClick={() => onRegenerate(issue.id)}
             disabled={isGenerating}
             className="btn btn-secondary btn-sm"
+            style={{ flex: '1 1 auto', minWidth: '120px', justifyContent: 'center' }}
           >
             <RefreshCw size={14} className={isGenerating ? 'animate-spin' : ''} />
             Regenerate Fix
@@ -329,6 +338,7 @@ export const DiffModal: React.FC<DiffModalProps> = ({
             onClick={() => onReject(issue.id)}
             disabled={isGenerating}
             className="btn btn-danger btn-sm"
+            style={{ flex: '1 1 auto', minWidth: '90px', justifyContent: 'center' }}
           >
             <XCircle size={14} />
             Reject
@@ -338,6 +348,7 @@ export const DiffModal: React.FC<DiffModalProps> = ({
             onClick={() => onApprove(issue.id)}
             disabled={isGenerating || isApproved}
             className="btn btn-success btn-sm"
+            style={{ flex: '1 1 auto', minWidth: '130px', justifyContent: 'center' }}
           >
             <CheckCircle2 size={14} />
             {isApproved ? 'Approved ✓' : 'Approve Patch'}
@@ -350,6 +361,9 @@ export const DiffModal: React.FC<DiffModalProps> = ({
             style={{
               background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
               boxShadow: '0 2px 10px rgba(139, 92, 246, 0.35)',
+              flex: '1 1 auto',
+              minWidth: '150px',
+              justifyContent: 'center',
             }}
           >
             <GitPullRequest size={14} />

@@ -38,19 +38,29 @@ export const IssueFilters: React.FC<IssueFiltersProps> = ({
   ];
 
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div style={{ marginBottom: '20px', width: '100%' }}>
       {/* Category Pills & Search */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '16px',
+          gap: '12px',
           flexWrap: 'wrap',
-          marginBottom: '16px',
+          marginBottom: '14px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        {/* Category Pills */}
+        <div
+          className="touch-horizontal-scroll"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            flexWrap: 'wrap',
+            flex: '1 1 auto',
+          }}
+        >
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
             return (
@@ -67,6 +77,8 @@ export const IssueFilters: React.FC<IssueFiltersProps> = ({
                   fontWeight: isActive ? '700' : '500',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                  minHeight: '34px',
                 }}
               >
                 {cat.label}
@@ -76,7 +88,7 @@ export const IssueFilters: React.FC<IssueFiltersProps> = ({
         </div>
 
         {/* Search */}
-        <div style={{ position: 'relative', minWidth: '280px' }}>
+        <div style={{ position: 'relative', flex: '1 1 220px', width: '100%', minWidth: 0 }}>
           <Search
             size={16}
             color="var(--text-muted)"
@@ -88,13 +100,13 @@ export const IssueFilters: React.FC<IssueFiltersProps> = ({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="input-text"
-            style={{ paddingLeft: '36px', height: '36px', fontSize: '0.825rem' }}
+            style={{ paddingLeft: '36px', height: '38px', fontSize: '0.825rem' }}
           />
         </div>
       </div>
 
       {/* Severity Counters & Filters */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Severity:
         </span>
@@ -106,10 +118,11 @@ export const IssueFilters: React.FC<IssueFiltersProps> = ({
             border: '1px solid var(--border-subtle)',
             color: '#fff',
             borderRadius: '6px',
-            padding: '4px 10px',
+            padding: '5px 10px',
             fontSize: '0.75rem',
             cursor: 'pointer',
             fontWeight: selectedSeverity === 'all' ? '700' : '500',
+            minHeight: '30px',
           }}
         >
           All ({severityCounts.total})

@@ -55,11 +55,12 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onOpenFix, isFixing
     <div
       className="glass-panel"
       style={{
-        padding: '20px',
+        padding: 'clamp(14px, 2.5vw, 20px)',
         marginBottom: '14px',
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
+        width: '100%',
         borderLeft: `4px solid ${
           issue.severity === 'critical'
             ? 'var(--critical)'
@@ -73,7 +74,7 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onOpenFix, isFixing
     >
       {/* Top Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
           {getSeverityBadge()}
           <span
             style={{
@@ -107,12 +108,14 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onOpenFix, isFixing
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '0.8rem',
+            fontSize: '0.775rem',
             color: 'var(--text-muted)',
             fontFamily: 'var(--font-mono)',
+            wordBreak: 'break-all',
+            maxWidth: '100%',
           }}
         >
-          <FileCode size={14} />
+          <FileCode size={13} style={{ flexShrink: 0 }} />
           <span style={{ color: 'var(--text-secondary)' }}>{issue.file_path}</span>
           {issue.line_number > 0 && <span style={{ color: 'var(--cyan)' }}>:{issue.line_number}</span>}
         </div>
@@ -120,8 +123,10 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onOpenFix, isFixing
 
       {/* Title & Description */}
       <div>
-        <h4 style={{ fontSize: '1.05rem', fontWeight: '700', marginBottom: '6px' }}>{issue.title}</h4>
-        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+        <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '6px', wordBreak: 'break-word' }}>
+          {issue.title}
+        </h4>
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, wordBreak: 'break-word' }}>
           {issue.description}
         </p>
       </div>
@@ -134,14 +139,15 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onOpenFix, isFixing
             border: '1px solid var(--border-subtle)',
             borderRadius: '8px',
             padding: '10px 14px',
-            fontSize: '0.8rem',
+            fontSize: '0.775rem',
             fontFamily: 'var(--font-mono)',
             color: '#e2e8f0',
             overflowX: 'auto',
-            maxHeight: '120px',
+            maxHeight: '130px',
+            WebkitOverflowScrolling: 'touch',
           }}
         >
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginBottom: '4px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.675rem', marginBottom: '4px' }}>
             Flagged Code Snippet:
           </div>
           <code>{issue.code_snippet}</code>
@@ -161,22 +167,26 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onOpenFix, isFixing
           gap: '10px',
         }}
       >
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', flex: 1, minWidth: '240px' }}>
+        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', flex: '1 1 240px', minWidth: 0 }}>
           <strong style={{ color: 'var(--text-secondary)' }}>Recommendation:</strong> {issue.recommendation}
         </div>
 
         <button
           onClick={() => onOpenFix(issue)}
           disabled={isFixing}
-          className="btn btn-primary btn-sm"
+          className="btn btn-primary btn-sm btn-mobile-full"
           style={{
             background: hasSuggestion
               ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
               : 'linear-gradient(135deg, var(--cyan) 0%, #6366f1 100%)',
+            flex: '1 1 auto',
+            minHeight: '38px',
+            maxWidth: '240px',
+            justifyContent: 'center',
           }}
         >
           <Sparkles size={14} />
-          {hasSuggestion ? 'Review Proposed Fix' : 'Fix with AI'}
+          <span>{hasSuggestion ? 'Review Proposed Fix' : 'Fix with AI'}</span>
           <ArrowRight size={14} />
         </button>
       </div>

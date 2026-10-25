@@ -117,24 +117,35 @@ ${iss.code_snippet ? `\`\`\`${repository.language.toLowerCase()}\n${iss.code_sni
               background: '#070a10',
               border: '1px solid var(--border-subtle)',
               borderRadius: '8px',
-              padding: '16px',
+              padding: '14px',
               fontSize: '0.75rem',
               color: '#cbd5e1',
               maxHeight: '340px',
               overflowY: 'auto',
+              overflowX: 'auto',
               whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              WebkitOverflowScrolling: 'touch',
             }}
           >
             {markdownContent}
           </pre>
         </div>
 
-        <div className="modal-footer">
-          <button onClick={handleCopy} className="btn btn-secondary btn-sm">
+        <div className="modal-footer" style={{ flexWrap: 'wrap', gap: '8px' }}>
+          <button
+            onClick={handleCopy}
+            className="btn btn-secondary btn-sm"
+            style={{ flex: '1 1 auto', minWidth: '130px', justifyContent: 'center' }}
+          >
             {copied ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
             {copied ? 'Copied to Clipboard!' : 'Copy Markdown'}
           </button>
-          <button onClick={handleDownload} className="btn btn-primary btn-sm">
+          <button
+            onClick={handleDownload}
+            className="btn btn-primary btn-sm"
+            style={{ flex: '1 1 auto', minWidth: '150px', justifyContent: 'center' }}
+          >
             <Download size={14} />
             Download .md Report
           </button>

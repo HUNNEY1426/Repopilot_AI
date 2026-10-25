@@ -41,20 +41,30 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
   const [isExpanded, setIsExpanded] = React.useState(false);
 
   return (
+
     <div
       className="glass-panel"
       style={{
-        padding: '28px',
+        padding: 'clamp(18px, 3vw, 28px)',
         marginBottom: '24px',
         display: 'flex',
         alignItems: 'center',
-        gap: '36px',
+        gap: 'clamp(18px, 3vw, 36px)',
         flexWrap: 'wrap',
+        width: '100%',
       }}
     >
       {/* Radial Gauge */}
-      <div style={{ position: 'relative', width: '150px', height: '150px', flexShrink: 0 }}>
-        <svg width="150" height="150" viewBox="0 0 150 150">
+      <div
+        style={{
+          position: 'relative',
+          width: '140px',
+          height: '140px',
+          flexShrink: 0,
+          margin: '0 auto',
+        }}
+      >
+        <svg width="140" height="140" viewBox="0 0 150 150">
           {/* Background circle */}
           <circle
             cx="75"
@@ -92,17 +102,27 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
             justifyContent: 'center',
           }}
         >
-          <span style={{ fontSize: '2.5rem', fontWeight: '800', lineHeight: 1 }}>{score}</span>
-          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '2.4rem', fontWeight: '800', lineHeight: 1 }}>{score}</span>
+          <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             / 100 HEALTH
           </span>
         </div>
       </div>
 
       {/* Summary and Metadata */}
-      <div style={{ flex: 1, minWidth: '300px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: '700' }}>{repository.name}</h2>
+      <div style={{ flex: '1 1 280px', minWidth: 0, width: '100%' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            marginBottom: '8px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.45rem)', fontWeight: '700', wordBreak: 'break-word' }}>
+            {repository.name}
+          </h2>
           <span
             style={{
               padding: '4px 10px',
@@ -113,6 +133,7 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
               color: gradeColor,
               border: `1px solid ${gradeBorder}`,
               letterSpacing: '0.04em',
+              whiteSpace: 'nowrap',
             }}
           >
             {gradeText}
@@ -121,11 +142,12 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
 
         <p
           style={{
-            fontSize: '0.9rem',
+            fontSize: '0.875rem',
             color: 'var(--text-secondary)',
             marginBottom: '16px',
             lineHeight: 1.6,
             whiteSpace: 'pre-line',
+            wordBreak: 'break-word',
           }}
         >
           {isExpanded || analysis.summary.length <= 260
@@ -151,7 +173,7 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
         </p>
 
         {/* Metadata Badges */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px 14px', flexWrap: 'wrap' }}>
           <div
             style={{
               display: 'flex',
@@ -159,6 +181,9 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
               gap: '6px',
               fontSize: '0.8rem',
               color: 'var(--text-secondary)',
+              background: 'rgba(255,255,255,0.02)',
+              padding: '4px 8px',
+              borderRadius: '6px',
             }}
           >
             <GitBranch size={15} color="var(--cyan)" />
@@ -173,6 +198,9 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
               gap: '6px',
               fontSize: '0.8rem',
               color: 'var(--text-secondary)',
+              background: 'rgba(255,255,255,0.02)',
+              padding: '4px 8px',
+              borderRadius: '6px',
             }}
           >
             <GitCommit size={15} color="var(--violet)" />
@@ -189,6 +217,9 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
               gap: '6px',
               fontSize: '0.8rem',
               color: 'var(--text-secondary)',
+              background: 'rgba(255,255,255,0.02)',
+              padding: '4px 8px',
+              borderRadius: '6px',
             }}
           >
             <FileCode size={15} color="var(--medium)" />
@@ -203,6 +234,9 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
               gap: '6px',
               fontSize: '0.8rem',
               color: 'var(--text-secondary)',
+              background: 'rgba(255,255,255,0.02)',
+              padding: '4px 8px',
+              borderRadius: '6px',
             }}
           >
             <ShieldAlert size={15} color={analysis.metrics.vulnerabilitiesDetected > 0 ? 'var(--critical)' : 'var(--success)'} />
@@ -219,10 +253,13 @@ export const HealthOverview: React.FC<HealthOverviewProps> = ({ analysis, reposi
               gap: '6px',
               fontSize: '0.8rem',
               color: 'var(--text-secondary)',
+              background: 'rgba(255,255,255,0.02)',
+              padding: '4px 8px',
+              borderRadius: '6px',
             }}
           >
             <CheckCircle2 size={15} color="var(--low)" />
-            <span>Estimated Test Coverage:</span>
+            <span>Test Coverage:</span>
             <strong style={{ color: '#fff' }}>{analysis.metrics.estimatedTestCoverage}%</strong>
           </div>
         </div>

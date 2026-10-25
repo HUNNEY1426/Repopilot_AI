@@ -16,18 +16,35 @@ export const HistoryChart: React.FC<HistoryChartProps> = ({
   if (history.length <= 1) return null;
 
   return (
-    <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+    <div
+      className="glass-panel"
+      style={{
+        padding: 'clamp(16px, 3vw, 24px)',
+        marginBottom: '24px',
+        width: '100%',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <History size={18} color="var(--violet)" />
-          <h3 style={{ fontSize: '1.1rem', fontWeight: '700' }}>Repository Health History</h3>
+          <h3 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.15rem)', fontWeight: '700' }}>Repository Health History</h3>
         </div>
         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
           {history.length} scans recorded
         </span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', overflowX: 'auto', paddingBottom: '6px' }}>
+      <div
+        className="touch-horizontal-scroll"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          overflowX: 'auto',
+          paddingBottom: '8px',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
         {history.map((scan, index) => {
           const isSelected = scan.id === currentAnalysisId;
           const prevScan = index < history.length - 1 ? history[index + 1] : null;
